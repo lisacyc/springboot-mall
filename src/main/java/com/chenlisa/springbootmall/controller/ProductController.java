@@ -53,4 +53,11 @@ public class ProductController {
 
         return ResponseEntity.status(HttpStatus.OK).body(updatedProduct);
     }
+
+    @DeleteMapping("/products/{pid}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Integer pid) {
+        productService.delete(pid);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }

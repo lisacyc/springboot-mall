@@ -9,4 +9,6 @@ public interface ProductService {
     Integer create(ProductRequest data);
 
     void update(Integer pid, ProductRequest data);
+
+    void delete(Integer pid);
 }

@@ -81,4 +81,14 @@ public class ProductDaoImpl implements ProductDao {
 
         sql.update(query, map);
     }
+
+    @Override
+    public void delete(Integer pid) {
+        String query = "DELETE FROM product WHERE product_id = :id";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("id", pid);
+
+        sql.update(query, map);
+    }
 }
