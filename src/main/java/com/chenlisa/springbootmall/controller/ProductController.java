@@ -37,4 +37,20 @@ public class ProductController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+    @PutMapping("/products/{pid}")
+    public ResponseEntity<Product> createProduct(@PathVariable Integer pid,
+                                                 @RequestBody @Valid ProductRequest productRequest) {
+
+        // 檢查商品是否存在
+        Product product = productService.getById(pid);
+        if (product == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        productService.update(pid, productRequest);
+        Product updatedProduct = productService.getById(pid);
+
+        return ResponseEntity.status(HttpStatus.OK).body(updatedProduct);
+    }
 }
