@@ -6,12 +6,14 @@ import com.chenlisa.springbootmall.dto.ProductRequest;
 import com.chenlisa.springbootmall.model.Product;
 import com.chenlisa.springbootmall.rowmapper.ProductRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import java.sql.ResultSet;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +55,28 @@ public class ProductDaoImpl implements ProductDao {
         List<Product> productList = sql.query(query, map, new ProductRowMapper());
 
         return productList;
+    }
+
+    @Override
+    public Integer countProduct(ProductQueryParams productQueryParams) {
+        String query = "SELECT COUNT(*) FROM product WHERE 1=1";
+
+        Map<String, Object> map = new HashMap<>();
+
+        // 查詢
+        if (productQueryParams.getCategory() != null) {
+            query += " AND category = :category";
+            map.put("category", productQueryParams.getCategory().name());
+        }
+
+        if (productQueryParams.getSearch() != null) {
+            query += " AND product_name LIKE :productName";
+            map.put("productName", "%" + productQueryParams.getSearch() + "%");
+        }
+
+        Integer totalCount = sql.queryForObject(query, map, Integer.class);
+
+        return totalCount;
     }
 
     @Override
