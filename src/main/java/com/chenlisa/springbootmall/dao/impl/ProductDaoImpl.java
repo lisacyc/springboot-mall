@@ -34,15 +34,7 @@ public class ProductDaoImpl implements ProductDao {
         Map<String, Object> map = new HashMap<>();
 
         // 查詢
-        if (productQueryParams.getCategory() != null) {
-            query += " AND category = :category";
-            map.put("category", productQueryParams.getCategory().name());
-        }
-
-        if (productQueryParams.getSearch() != null) {
-            query += " AND product_name LIKE :productName";
-            map.put("productName", "%" + productQueryParams.getSearch() + "%");
-        }
+        query = addFilteringSql(query, map, productQueryParams);
 
         // 排序
         query += " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort();
@@ -64,15 +56,7 @@ public class ProductDaoImpl implements ProductDao {
         Map<String, Object> map = new HashMap<>();
 
         // 查詢
-        if (productQueryParams.getCategory() != null) {
-            query += " AND category = :category";
-            map.put("category", productQueryParams.getCategory().name());
-        }
-
-        if (productQueryParams.getSearch() != null) {
-            query += " AND product_name LIKE :productName";
-            map.put("productName", "%" + productQueryParams.getSearch() + "%");
-        }
+        query = addFilteringSql(query, map, productQueryParams);
 
         Integer totalCount = sql.queryForObject(query, map, Integer.class);
 
@@ -147,5 +131,19 @@ public class ProductDaoImpl implements ProductDao {
         map.put("id", pid);
 
         sql.update(query, map);
+    }
+
+    private String addFilteringSql(String query, Map<String, Object> map, ProductQueryParams productQueryParams) {
+        if (productQueryParams.getCategory() != null) {
+            query += " AND category = :category";
+            map.put("category", productQueryParams.getCategory().name());
+        }
+
+        if (productQueryParams.getSearch() != null) {
+            query += " AND product_name LIKE :productName";
+            map.put("productName", "%" + productQueryParams.getSearch() + "%");
+        }
+
+        return query;
     }
 }
