@@ -2,6 +2,7 @@ package com.chenlisa.springbootmall.dao.impl;
 
 import com.chenlisa.springbootmall.constant.ProductCategory;
 import com.chenlisa.springbootmall.dao.ProductDao;
+import com.chenlisa.springbootmall.dto.ProductQueryParams;
 import com.chenlisa.springbootmall.dto.ProductRequest;
 import com.chenlisa.springbootmall.model.Product;
 import com.chenlisa.springbootmall.rowmapper.ProductRowMapper;
@@ -24,20 +25,21 @@ public class ProductDaoImpl implements ProductDao {
     private NamedParameterJdbcTemplate sql;
 
     @Override
-    public List<Product> getProducts(ProductCategory category, String search) {
+    public List<Product> getProducts(ProductQueryParams productQueryParams) {
         String query = "SELECT product_id, product_name, category, image_url, " +
                 "price, stock, description, created_date, last_modified_date " +
                 "FROM product WHERE 1=1";
 
         Map<String, Object> map = new HashMap<>();
 
-        if (category != null) {
+        if (productQueryParams.getCategory() != null) {
             query += " AND category = :category";
-            map.put("category", category.name());
+            map.put("category", productQueryParams.getCategory().name());
         }
-        if (search != null) {
+
+        if (productQueryParams.getSearch() != null) {
             query += " AND product_name LIKE :productName";
-            map.put("productName", "%" + search + "%");
+            map.put("productName", "%" + productQueryParams.getSearch() + "%");
         }
 
         List<Product> productList = sql.query(query, map, new ProductRowMapper());

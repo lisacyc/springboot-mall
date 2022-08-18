@@ -1,6 +1,6 @@
 package com.chenlisa.springbootmall.dao;
 
-import com.chenlisa.springbootmall.constant.ProductCategory;
+import com.chenlisa.springbootmall.dto.ProductQueryParams;
 import com.chenlisa.springbootmall.dto.ProductRequest;
 import com.chenlisa.springbootmall.model.Product;
 
@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ProductDao {
 
-    List<Product> getProducts(ProductCategory category, String search);
+    List<Product> getProducts(ProductQueryParams productQueryParams);
 
     Product getProductById(Integer id);
 
