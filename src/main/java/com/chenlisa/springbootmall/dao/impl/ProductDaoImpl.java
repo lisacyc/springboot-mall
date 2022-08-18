@@ -1,6 +1,5 @@
 package com.chenlisa.springbootmall.dao.impl;
 
-import com.chenlisa.springbootmall.constant.ProductCategory;
 import com.chenlisa.springbootmall.dao.ProductDao;
 import com.chenlisa.springbootmall.dto.ProductQueryParams;
 import com.chenlisa.springbootmall.dto.ProductRequest;
@@ -32,6 +31,7 @@ public class ProductDaoImpl implements ProductDao {
 
         Map<String, Object> map = new HashMap<>();
 
+        // 查詢
         if (productQueryParams.getCategory() != null) {
             query += " AND category = :category";
             map.put("category", productQueryParams.getCategory().name());
@@ -42,7 +42,13 @@ public class ProductDaoImpl implements ProductDao {
             map.put("productName", "%" + productQueryParams.getSearch() + "%");
         }
 
+        // 排序
         query += " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort();
+
+        // 分頁
+        query += " LIMIT :limit OFFSET :offset";
+        map.put("limit", productQueryParams.getLimit());
+        map.put("offset", productQueryParams.getOffset());
 
         List<Product> productList = sql.query(query, map, new ProductRowMapper());
 
