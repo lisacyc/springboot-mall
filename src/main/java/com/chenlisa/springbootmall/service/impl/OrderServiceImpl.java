@@ -5,6 +5,7 @@ import com.chenlisa.springbootmall.dao.ProductDao;
 import com.chenlisa.springbootmall.dao.UserDao;
 import com.chenlisa.springbootmall.dto.BuyItem;
 import com.chenlisa.springbootmall.dto.CreateOrderRequest;
+import com.chenlisa.springbootmall.dto.OrderQueryParams;
 import com.chenlisa.springbootmall.model.Order;
 import com.chenlisa.springbootmall.model.OrderItem;
 import com.chenlisa.springbootmall.model.Product;
@@ -38,6 +39,11 @@ public class OrderServiceImpl implements OrderService {
     private UserDao userDao;
 
     @Override
+    public Integer countOrder(OrderQueryParams orderQueryParams) {
+        return orderDao.countOrder(orderQueryParams);
+    }
+
+    @Override
     public Order getOrderById(Integer oid) {
         Order order = orderDao.getOrderById(oid);
 
@@ -45,6 +51,19 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderItemList(itemList);
 
         return order;
+    }
+
+    @Override
+    public List<Order> getOrdersById(OrderQueryParams orderQueryParams) {
+        List<Order> orderList = orderDao.getOrders(orderQueryParams);
+
+        // 取得 order 詳細資訊
+        for (Order order : orderList) {
+            List<OrderItem> itemList = orderDao.getOrderItemsByOrderId(order.getOrderId());
+            order.setOrderItemList(itemList);
+        }
+
+        return orderList;
     }
 
     @Transactional

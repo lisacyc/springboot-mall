@@ -1,6 +1,7 @@
 package com.chenlisa.springbootmall.dao.impl;
 
 import com.chenlisa.springbootmall.dao.OrderDao;
+import com.chenlisa.springbootmall.dto.OrderQueryParams;
 import com.chenlisa.springbootmall.model.Order;
 import com.chenlisa.springbootmall.model.OrderItem;
 import com.chenlisa.springbootmall.rowmapper.OrderItemRowMapper;
@@ -24,6 +25,20 @@ public class OrderDaoImpl implements OrderDao {
     private NamedParameterJdbcTemplate sql;
 
     @Override
+    public Integer countOrder(OrderQueryParams orderQueryParams) {
+        String query = "select COUNT(*) from `order` where 1=1";
+
+        Map<String, Object> map = new HashMap<>();
+
+        // 查詢條件
+        query = addFilteringSql(query, map, orderQueryParams);
+
+        Integer total = sql.queryForObject(query, map, Integer.class);
+
+        return total;
+    }
+
+    @Override
     public Order getOrderById(Integer oid) {
         String query = "select order_id, user_id, total_amount, created_date, last_modified_date " +
                 "from `order` where order_id = :oid";
@@ -34,6 +49,28 @@ public class OrderDaoImpl implements OrderDao {
         List<Order> orderList = sql.query(query, new MapSqlParameterSource(map), new OrderRowMapper());
 
         return (orderList.size() > 0) ? orderList.get(0) : null;
+    }
+
+    @Override
+    public List<Order> getOrders(OrderQueryParams orderQueryParams) {
+        String query = "select order_id, user_id, total_amount, created_date, last_modified_date from `order` where 1=1";
+
+        Map<String, Object> map = new HashMap<>();
+
+        // 查詢條件
+        query = addFilteringSql(query, map, orderQueryParams);
+
+        // 排序
+        query += " ORDER BY created_date DESC";
+
+        // 分頁
+        query += " LIMIT :limit OFFSET :offset";
+        map.put("limit", orderQueryParams.getLimit());
+        map.put("offset", orderQueryParams.getOffset());
+
+        List<Order> orderList = sql.query(query, new MapSqlParameterSource(map), new OrderRowMapper());
+
+        return orderList;
     }
 
     @Override
@@ -91,5 +128,14 @@ public class OrderDaoImpl implements OrderDao {
         }
 
         sql.batchUpdate(query, parameterSources);
+    }
+
+    private String addFilteringSql(String query, Map<String, Object> map, OrderQueryParams orderQueryParams) {
+        if (orderQueryParams.getUserId() != null) {
+            query += " and user_id = :uid";
+            map.put("uid", orderQueryParams.getUserId());
+        }
+
+        return query;
     }
 }
