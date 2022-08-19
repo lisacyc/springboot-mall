@@ -1,5 +1,6 @@
 package com.chenlisa.springbootmall.controller;
 
+import com.chenlisa.springbootmall.dto.UserLoginRequest;
 import com.chenlisa.springbootmall.dto.UserRegisterRequest;
 import com.chenlisa.springbootmall.model.User;
 import com.chenlisa.springbootmall.service.UserService;
@@ -27,6 +28,17 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } else {
             return ResponseEntity.status(HttpStatus.CREATED).body(user);
+        }
+    }
+
+    @PostMapping("users/login")
+    public ResponseEntity<User> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
+        User user = userService.login(userLoginRequest);
+
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(user);
         }
     }
 }

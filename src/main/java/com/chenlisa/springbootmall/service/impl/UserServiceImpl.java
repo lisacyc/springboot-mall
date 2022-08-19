@@ -1,6 +1,7 @@
 package com.chenlisa.springbootmall.service.impl;
 
 import com.chenlisa.springbootmall.dao.UserDao;
+import com.chenlisa.springbootmall.dto.UserLoginRequest;
 import com.chenlisa.springbootmall.dto.UserRegisterRequest;
 import com.chenlisa.springbootmall.model.User;
 import com.chenlisa.springbootmall.service.UserService;
@@ -36,5 +37,23 @@ public class UserServiceImpl implements UserService {
 
         // 創建帳號
         return userDao.createUser(userRegisterRequest);
+    }
+
+    @Override
+    public User login(UserLoginRequest userLoginRequest) {
+        // 檢查註冊的 email
+        User user = userDao.getUserByEmail(userLoginRequest.getEmail());
+
+        if (user == null) {
+            log.warn("該 email {} 尚未註冊", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        if (!user.getPassword().equals(userLoginRequest.getPassword())) {
+            log.warn("email {} 密碼錯誤", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        return user;
     }
 }
