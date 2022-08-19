@@ -19,11 +19,13 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping("users/{uid}/orders")
-    public ResponseEntity<?> createOrder(@PathVariable Integer uid,
+    public ResponseEntity<Order> createOrder(@PathVariable Integer uid,
                                          @RequestBody @Valid CreateOrderRequest orderRequest) {
 
         Integer oid = orderService.createOrder(uid, orderRequest);
 
-        return ResponseEntity.status(201).body(oid);
+        Order order = orderService.getOrderById(oid);
+
+        return ResponseEntity.status(201).body(order);
     }
 }

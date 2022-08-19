@@ -4,6 +4,7 @@ import com.chenlisa.springbootmall.dao.OrderDao;
 import com.chenlisa.springbootmall.dao.ProductDao;
 import com.chenlisa.springbootmall.dto.BuyItem;
 import com.chenlisa.springbootmall.dto.CreateOrderRequest;
+import com.chenlisa.springbootmall.model.Order;
 import com.chenlisa.springbootmall.model.OrderItem;
 import com.chenlisa.springbootmall.model.Product;
 import com.chenlisa.springbootmall.service.OrderService;
@@ -12,9 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class OrderServiceImpl implements OrderService {
@@ -24,6 +23,16 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private ProductDao productDao;
+
+    @Override
+    public Order getOrderById(Integer oid) {
+        Order order = orderDao.getOrderById(oid);
+
+        List<OrderItem> itemList = orderDao.getOrderItemsByOrderId(order.getOrderId());
+        order.setOrderItemList(itemList);
+
+        return order;
+    }
 
     @Transactional
     @Override
