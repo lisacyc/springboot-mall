@@ -18,5 +18,7 @@ public interface ProductDao {
 
     void update(Integer pid, ProductRequest data);
 
+    void updateStock(List<Object> updateStockList);
+
     void delete(Integer pid);
 }

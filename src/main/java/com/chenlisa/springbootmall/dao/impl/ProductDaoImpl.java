@@ -6,14 +6,12 @@ import com.chenlisa.springbootmall.dto.ProductRequest;
 import com.chenlisa.springbootmall.model.Product;
 import com.chenlisa.springbootmall.rowmapper.ProductRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
-import java.sql.ResultSet;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -121,6 +119,25 @@ public class ProductDaoImpl implements ProductDao {
         map.put("lastModifiedDate", new Date());
 
         sql.update(query, map);
+    }
+
+    @Override
+    public void updateStock(List<Object> updateStockList) {
+        String query = "UPDATE product SET stock = :stock, last_modified_date = :lastModifiedDate" +
+                " WHERE product_id = :id";
+
+        MapSqlParameterSource[] parameterSources = new MapSqlParameterSource[updateStockList.size()];
+
+        for (int i = 0; i < updateStockList.size(); i++) {
+            Map<String, Object> data = (Map<String, Object>) updateStockList.get(i);
+
+            parameterSources[i] = new MapSqlParameterSource();
+            parameterSources[i].addValue("id", data.get("pid"));
+            parameterSources[i].addValue("stock", data.get("newStock"));
+            parameterSources[i].addValue("lastModifiedDate", new Date());
+        }
+
+        sql.batchUpdate(query, parameterSources);
     }
 
     @Override
